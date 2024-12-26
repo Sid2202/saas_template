@@ -1,0 +1,39 @@
+
+services:
+  # postgres-db:
+  #   image: postgres:latest
+  #   container_name: postgres-db
+  #   environment:
+  #     POSTGRES_USER: user
+  #     POSTGRES_PASSWORD: password
+  #     POSTGRES_DB: tenant_a_db
+  #   networks:
+  #     - app_network
+  #   volumes:
+  #     - ./init-scripts:/docker-entrypoint-initdb.d
+  #     # - postgres_data:/var/lib/postgresql/data
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    container_name: nginx
+    ports:
+      - "8080:80" # Expose NGINX
+    depends_on:
+      - fastapi
+    networks:
+      - app_network
+
+  fastapi:
+    build:
+      context: .
+      dockerfile: Dockerfile.fastapi
+    container_name: fastapi
+    ports:
+      - "8000:8000" # Expose FastAPI for local testing
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge
